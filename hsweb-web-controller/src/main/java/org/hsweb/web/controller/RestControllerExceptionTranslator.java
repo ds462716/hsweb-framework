@@ -25,10 +25,10 @@ public class RestControllerExceptionTranslator {
         return ResponseMessage.error(exception.getMessage(), 400);
     }
 
-    @ExceptionHandler(org.hsweb.ezorm.exception.ValidationException.class)
+    @ExceptionHandler(org.hsweb.ezorm.rdb.exception.ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ResponseMessage handleException(org.hsweb.ezorm.exception.ValidationException exception) {
+    ResponseMessage handleException(org.hsweb.ezorm.rdb.exception.ValidationException exception) {
         return ResponseMessage.error(JSON.toJSONString(exception.getValidateResult()), 400);
     }
 
@@ -37,6 +37,9 @@ public class RestControllerExceptionTranslator {
     @ResponseBody
     ResponseMessage handleException(BusinessException exception, HttpServletResponse response) {
         response.setStatus(exception.getStatus());
+        if (exception.getCause() != null) {
+            logger.error("{}:{}", exception.getMessage(), exception.getStatus(), exception.getCause());
+        }
         return ResponseMessage.error(exception.getMessage(), exception.getStatus());
     }
 
